@@ -4,8 +4,9 @@ import {
   AdminPostOrdersOrderReq,
   Country,
 } from "@medusajs/medusa"
-import { MutateOptions } from "@tanstack/react-query"
+import React from "react"
 import { useForm } from "react-hook-form"
+import { MutateOptions } from "react-query"
 import Button from "../../../components/fundamentals/button"
 import Modal from "../../../components/molecules/modal"
 import AddressForm, {
@@ -105,10 +106,10 @@ const AddressModal = ({
             />
           </Modal.Content>
           <Modal.Footer>
-            <div className="flex justify-end w-full h-8">
+            <div className="flex w-full h-8 justify-end">
               <Button
                 variant="ghost"
-                className="justify-center w-32 mr-2 text-small"
+                className="mr-2 w-32 text-small justify-center"
                 size="large"
                 onClick={handleClose}
                 type="button"
@@ -117,7 +118,7 @@ const AddressModal = ({
               </Button>
               <Button
                 size="large"
-                className="justify-center w-32 text-small"
+                className="w-32 text-small justify-center"
                 variant="primary"
                 type="submit"
                 loading={submitting}

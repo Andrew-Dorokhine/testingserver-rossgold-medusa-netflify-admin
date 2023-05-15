@@ -1,3 +1,4 @@
+import React from "react"
 import { Controller } from "react-hook-form"
 import Switch from "../../../../../components/atoms/switch"
 import FeatureToggle from "../../../../../components/fundamentals/feature-toggle"
@@ -72,7 +73,7 @@ const RegionDetailsForm = ({ form, isCreate = false }: Props) => {
               required
               placeholder="25"
               prefix="%"
-              step={1}
+              step={0.01}
               type={"number"}
               {...register(path("tax_rate"), {
                 required: isCreate ? "Tax rate is required" : undefined,
@@ -113,7 +114,7 @@ const RegionDetailsForm = ({ form, isCreate = false }: Props) => {
         />
       </div>
       <FeatureToggle featureFlag="tax_inclusive_pricing">
-        <div className="mt-xlarge flex items-start justify-between">
+        <div className="flex items-start justify-between mt-xlarge">
           <div className="flex flex-col gap-y-2xsmall">
             <h3 className="inter-base-semibold">Tax inclusive prices</h3>
             <p className="inter-base-regular text-grey-50">

@@ -1,7 +1,9 @@
 import { Product, ProductVariant, Region } from "@medusajs/medusa"
+import { PricedVariant } from "@medusajs/medusa/dist/types/pricing"
 import clsx from "clsx"
 import React, { useContext, useEffect, useState } from "react"
 import { Controller } from "react-hook-form"
+
 import Button from "../../../../components/fundamentals/button"
 import MinusIcon from "../../../../components/fundamentals/icons/minus-icon"
 import PlusIcon from "../../../../components/fundamentals/icons/plus-icon"
@@ -20,7 +22,6 @@ import {
 import RMASelectProductSubModal from "../../details/rma-sub-modals/products"
 import { useNewOrderForm } from "../form"
 import CustomItemSubModal from "./custom-item-sub-modal"
-import { useMedusa } from "medusa-react"
 
 const Items = () => {
   const { enableNextPage, disableNextPage, nextStepEnabled } =
@@ -28,32 +29,22 @@ const Items = () => {
 
   const {
     context: { region, items },
-    form: { control, register, setValue },
+    form: { control, register, setValue, getValues },
   } = useNewOrderForm()
 
-  const { client } = useMedusa()
-
-  const { fields, append, remove, update } = items
+  const { fields, append, remove } = items
 
   const [editQuantity, setEditQuantity] = useState(-1)
   const [editPrice, setEditPrice] = useState(-1)
 
   const layeredContext = useContext(LayeredModalContext)
 
-  const addItem = async (variants: ProductVariant[]) => {
+  const addItem = (variants: PricedVariant[]) => {
     const ids = fields.map((field) => field.variant_id)
-
     const itemsToAdd = variants.filter((v) => !ids.includes(v.id))
 
-    const variantIds = itemsToAdd.map((v) => v.id)
-
-    const { variants: newVariants } = await client.admin.variants.list({
-      id: variantIds,
-      region_id: region?.id,
-    })
-
     append(
-      newVariants.map((item) => ({
+      itemsToAdd.map((item) => ({
         quantity: 1,
         variant_id: item.id,
         title: item.title as string,
@@ -69,11 +60,11 @@ const Items = () => {
   }
 
   const handleEditQuantity = (index: number, value: number) => {
-    const field = fields[index]
-    field.quantity = field.quantity + value
+    const oldQuantity = getValues(`items.${index}.quantity`)
+    const newQuantity = +oldQuantity + value
 
-    if (field.quantity > 0) {
-      update(index, field)
+    if (newQuantity > 0) {
+      setValue(`items.${index}.quantity`, newQuantity)
     }
   }
 

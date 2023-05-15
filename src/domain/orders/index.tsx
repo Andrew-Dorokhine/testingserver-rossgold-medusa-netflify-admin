@@ -1,7 +1,6 @@
 import { useAdminCreateBatchJob } from "medusa-react"
-import React, { useContext, useMemo, useState } from "react"
+import React, { useContext, useMemo } from "react"
 import { Route, Routes, useNavigate } from "react-router-dom"
-
 import Button from "../../components/fundamentals/button"
 import ExportIcon from "../../components/fundamentals/icons/export-icon"
 import BodyCard from "../../components/organisms/body-card"
@@ -11,9 +10,8 @@ import OrderTable from "../../components/templates/order-table"
 import useNotification from "../../hooks/use-notification"
 import useToggleState from "../../hooks/use-toggle-state"
 import { getErrorMessage } from "../../utils/error-messages"
-import { PollingContext } from "../../context/polling"
 import Details from "./details"
-import { transformFiltersAsExportContext } from "./utils"
+import { PollingContext } from "../../context/polling"
 
 const VIEWS = ["orders", "drafts"]
 
@@ -24,9 +22,6 @@ const OrderIndex = () => {
   const navigate = useNavigate()
   const createBatchJob = useAdminCreateBatchJob()
   const notification = useNotification()
-
-  const [contextFilters, setContextFilters] =
-    useState<Record<string, { filter: string[] }>>()
 
   const {
     open: openExportModal,
@@ -49,11 +44,9 @@ const OrderIndex = () => {
 
   const handleCreateExport = () => {
     const reqObj = {
-      dry_run: false,
       type: "order-export",
-      context: contextFilters
-        ? transformFiltersAsExportContext(contextFilters)
-        : {},
+      context: {},
+      dry_run: false,
     }
 
     createBatchJob.mutate(reqObj, {
@@ -88,7 +81,7 @@ const OrderIndex = () => {
             className="h-fit"
             customActionable={actions}
           >
-            <OrderTable setContextFilters={setContextFilters} />
+            <OrderTable />
           </BodyCard>
         </div>
       </div>

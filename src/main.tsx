@@ -1,14 +1,17 @@
-import { MedusaProvider } from "medusa-react"
-import type { PropsWithChildren } from "react"
 import React from "react"
+import type { PropsWithChildren } from "react"
 import { createRoot } from "react-dom/client"
-import App from "./App"
+import { MedusaProvider } from "medusa-react"
 import "./assets/styles/global.css"
-import { LayeredModalProvider } from "./components/molecules/modal/layered-modal"
-import { SteppedProvider } from "./components/molecules/modal/stepped-modal"
-import { FeatureFlagProvider } from "./context/feature-flag"
+import { AccountProvider } from "./context/account"
+import { CacheProvider } from "./context/cache"
+import { InterfaceProvider } from "./context/interface"
 import { medusaUrl } from "./services/config"
 import queryClient from "./services/queryClient"
+import App from "./App"
+import { FeatureFlagProvider } from "./context/feature-flag"
+import { SteppedProvider } from "./components/molecules/modal/stepped-modal"
+import { LayeredModalProvider } from "./components/molecules/modal/layered-modal"
 
 const Page = ({ children }: PropsWithChildren) => {
   return (
@@ -18,11 +21,17 @@ const Page = ({ children }: PropsWithChildren) => {
         client: queryClient,
       }}
     >
-      <FeatureFlagProvider>
-        <SteppedProvider>
-          <LayeredModalProvider>{children}</LayeredModalProvider>
-        </SteppedProvider>
-      </FeatureFlagProvider>
+      <CacheProvider>
+        <AccountProvider>
+          <FeatureFlagProvider>
+            <InterfaceProvider>
+              <SteppedProvider>
+                <LayeredModalProvider>{children}</LayeredModalProvider>
+              </SteppedProvider>
+            </InterfaceProvider>
+          </FeatureFlagProvider>
+        </AccountProvider>
+      </CacheProvider>
     </MedusaProvider>
   )
 }

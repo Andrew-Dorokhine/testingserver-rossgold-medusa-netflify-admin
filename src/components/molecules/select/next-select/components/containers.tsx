@@ -10,7 +10,6 @@ import InputError from "../../../../atoms/input-error"
 
 type AdjacentContainerProps = {
   label?: string
-  htmlFor?: string
   helperText?: string
   required?: boolean
   name?: string
@@ -36,10 +35,7 @@ export const AdjacentContainer = forwardRef<
     return (
       <div className="flex flex-col gap-y-xsmall w-full" ref={ref}>
         {label && (
-          <label
-            className="inter-small-semibold text-grey-50"
-            id={`${name}_label`}
-          >
+          <label className="inter-small-semibold text-grey-50">
             {label}
             {required && <span className="text-rose-50">*</span>}
           </label>

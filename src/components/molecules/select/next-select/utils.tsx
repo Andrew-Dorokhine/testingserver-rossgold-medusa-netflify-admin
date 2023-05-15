@@ -1,4 +1,4 @@
-import { omit } from "lodash"
+import React from "react"
 import Highlighter from "react-highlight-words"
 import type {
   CommonPropsAndClassName,
@@ -14,22 +14,26 @@ export const cleanCommonProps = <
 >(
   props: Partial<CommonPropsAndClassName<Option, IsMulti, Group>> &
     AdditionalProps
-) => {
-  const innerProps = omit(props, [
-    "className",
-    "clearValue",
-    "cx",
-    "getStyles",
-    "getValue",
-    "hasValue",
-    "isMulti",
-    "isRtl",
-    "options",
-    "selectOption",
-    "selectProps",
-    "setValue",
-    "theme",
-  ])
+): Omit<
+  AdditionalProps,
+  keyof CommonPropsAndClassName<Option, IsMulti, Group>
+> => {
+  const {
+    className,
+    clearValue,
+    cx,
+    getStyles,
+    getValue,
+    hasValue,
+    isMulti,
+    isRtl,
+    options,
+    selectOption,
+    selectProps,
+    setValue,
+    theme,
+    ...innerProps
+  } = props
   return { ...innerProps }
 }
 
@@ -49,10 +53,6 @@ export const hasLabel = (option: unknown): option is { label: string } => {
 
 export const hasPrefix = (option: unknown): option is { prefix: string } => {
   return typeof option === "object" && option !== null && "prefix" in option
-}
-
-export const hasSuffix = (option: unknown): option is { suffix: string } => {
-  return typeof option === "object" && option !== null && "suffix" in option
 }
 
 export const isCreateOption = (

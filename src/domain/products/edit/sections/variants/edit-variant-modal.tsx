@@ -1,4 +1,5 @@
 import { Product, ProductVariant } from "@medusajs/medusa"
+import React from "react"
 import { useForm } from "react-hook-form"
 import Button from "../../../../../components/fundamentals/button"
 import Modal from "../../../../../components/molecules/modal"
@@ -38,8 +39,12 @@ const EditVariantModal = ({
     onClose()
   }
 
-  const { onUpdateVariant, onAddVariant, addingVariant, updatingVariant } =
-    useEditProductActions(product.id)
+  const {
+    onUpdateVariant,
+    onAddVariant,
+    addingVariant,
+    updatingVariant,
+  } = useEditProductActions(product.id)
 
   const onSubmit = handleSubmit((data) => {
     if (isDuplicate) {

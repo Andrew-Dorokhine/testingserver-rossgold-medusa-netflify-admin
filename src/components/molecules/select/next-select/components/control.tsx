@@ -1,4 +1,5 @@
 import clsx from "clsx"
+import React from "react"
 import {
   ClearIndicatorProps,
   ControlProps,
@@ -23,13 +24,12 @@ const Control = <
   isDisabled,
   isFocused,
   menuIsOpen,
-  selectProps: { size, customStyles, name },
+  selectProps: { size, customStyles },
 }: ControlProps<Option, IsMulti, Group>) => {
   return (
     <div
       ref={innerRef}
       {...innerProps}
-      id={name}
       className={cx(
         {
           control: true,

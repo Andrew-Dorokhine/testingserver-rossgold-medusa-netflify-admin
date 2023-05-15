@@ -11,7 +11,7 @@ type ItemsFulfilledProps = {
 const ItemsFulfilled: React.FC<ItemsFulfilledProps> = ({ event }) => {
   const title =
     event.sourceType === "claim"
-      ? "Replacement Items Fulfilled"
+      ? "Claim Items Fulfilled"
       : event.sourceType === "exchange"
       ? "Exchange Items Fulfilled"
       : "Items Fulfilled"

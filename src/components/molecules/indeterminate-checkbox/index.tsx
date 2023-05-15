@@ -1,16 +1,15 @@
 import clsx from "clsx"
-import React, { useImperativeHandle } from "react"
+import React, { ChangeEvent, useImperativeHandle } from "react"
 
 import CheckIcon from "../../fundamentals/icons/check-icon"
 
 type IndeterminateCheckboxProps = {
   type?: "checkbox" | "radio"
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (e: ChangeEvent) => void
   checked?: boolean
   title?: string
   indeterminate?: boolean
   className?: React.HTMLAttributes<HTMLInputElement>["className"]
-  name?: string
   disabled?: boolean // NOTE: only visual, still have to filter disabled ids out
 }
 
@@ -40,7 +39,7 @@ const IndeterminateCheckbox = React.forwardRef<
 
   if (type === "radio") {
     return (
-      <div className="flex h-full items-center">
+      <div className="items-center h-full flex">
         <input
           className={clsx({ "accent-violet-60": checked })}
           type="radio"
@@ -53,10 +52,10 @@ const IndeterminateCheckbox = React.forwardRef<
   }
 
   return (
-    <div className="flex h-full items-center">
+    <div className="items-center h-full flex">
       <div
         onClick={handleClick}
-        className={`flex h-5 w-5 cursor-pointer justify-center rounded-base border border-grey-30 text-grey-0 ${
+        className={`w-5 h-5 flex justify-center text-grey-0 border-grey-30 border cursor-pointer rounded-base ${
           rest.disabled
             ? checked
               ? "bg-gray-300"
@@ -71,7 +70,7 @@ const IndeterminateCheckbox = React.forwardRef<
       <input
         type="checkbox"
         className={clsx("hidden", className)}
-        defaultChecked={checked}
+        checked={checked}
         ref={innerRef}
         {...rest}
       />

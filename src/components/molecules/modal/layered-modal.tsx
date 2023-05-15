@@ -10,17 +10,17 @@ enum LayeredModalActions {
   RESET,
 }
 
-export type LayeredModalScreen = {
+type LayeredModalScreen = {
   title: string
   subtitle?: string
   onBack: () => void
-  onConfirm?: () => void
+  onConfirm: () => void
   view: ReactNode
 }
 
 export type ILayeredModalContext = {
   screens: LayeredModalScreen[]
-  push: (screen: LayeredModalScreen) => void
+  push: (screen: ReactNode) => void
   pop: () => void
   reset: () => void
 }
@@ -98,10 +98,9 @@ const LayeredModal: React.FC<LayeredModalProps> = ({
     >
       <Modal.Body
         className={clsx(
-          "flex flex-col justify-between transition-transform duration-200",
+          "transition-transform translate-x-full flex flex-col justify-between duration-200",
           {
             "translate-x-0": typeof screen !== "undefined",
-            "translate-x-full": typeof screen === "undefined",
           }
         )}
       >
@@ -112,7 +111,7 @@ const LayeredModal: React.FC<LayeredModalProps> = ({
                 <Button
                   variant="ghost"
                   size="small"
-                  className="h-8 w-8 text-grey-50"
+                  className="text-grey-50 w-8 h-8"
                   onClick={screen.onBack}
                 >
                   <ArrowLeftIcon size={20} />

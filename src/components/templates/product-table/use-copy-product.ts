@@ -80,7 +80,6 @@ const useCopyProduct = () => {
       variants.forEach((variant) => {
         const { prices, options, ...rest } = omit(variant, [
           "id",
-          "sku",
           "created_at",
           "updated_at",
           "deleted_at",

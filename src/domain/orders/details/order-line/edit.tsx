@@ -177,29 +177,14 @@ const OrderEditLine = ({
             )}
           </div>
           <div className="flex flex-col justify-center">
-            <div className="flex gap-2 items-center max-w-[310px]">
+            <div>
               <span
-                className={clsx(
-                  "font-semibold text-grey-900 flex-shrink-0 flex-grow",
-                  {
-                    "text-gray-400": isLocked,
-                  }
-                )}
+                className={clsx("inter-small-regular text-grey-900", {
+                  "text-gray-400": isLocked,
+                })}
               >
                 {item.title}
               </span>
-              {item?.variant?.options && (
-                <span
-                  className={clsx(
-                    "text-gray-400 flex gap-3 flex-shrink-1 truncate",
-                    {
-                      "text-gray-400": isLocked,
-                    }
-                  )}
-                >
-                  ({item.variant.options.map((o) => o.value).join(" • ")})
-                </span>
-              )}
             </div>
             <div className="flex items-center">
               {isNew && (
@@ -215,20 +200,20 @@ const OrderEditLine = ({
               )}
 
               <div className="min-h-[20px]">
-                {item.variant?.sku && (
-                  <CopyToClipboard
-                    value={item.variant?.sku}
-                    displayValue={
-                      <span
-                        className={clsx("text-gray-500 flex gap-3", {
-                          "text-gray-400": isLocked,
-                        })}
-                      >
-                        {item.variant?.sku}
-                      </span>
-                    }
-                    successDuration={1000}
-                  />
+                {item?.variant && (
+                  <span
+                    className={clsx(
+                      "inter-small-regular text-gray-500 flex gap-3",
+                      {
+                        "text-gray-400": isLocked,
+                      }
+                    )}
+                  >
+                    {item.variant.title}
+                    {item.variant.sku && (
+                      <CopyToClipboard value={item.variant.sku} iconSize={14} />
+                    )}
+                  </span>
                 )}
               </div>
             </div>
@@ -265,31 +250,32 @@ const OrderEditLine = ({
             />
           </div>
 
-          <div className="flex gap-6 items-center h-full">
+          <div
+            className={clsx(
+              "flex small:space-x-2 medium:space-x-4 large:space-x-6",
+              { "!text-gray-400 pointer-events-none": isLocked }
+            )}
+          >
             <div
               className={clsx(
-                "flex small:space-x-2 medium:space-x-4 large:space-x-6",
-                { "!text-gray-400 pointer-events-none": isLocked }
+                "inter-small-regular text-gray-900 min-w-[60px] text-right",
+                {
+                  "!text-gray-400 pointer-events-none": isLocked,
+                }
               )}
             >
-              <div
-                className={clsx("text-gray-900 min-w-[60px] text-right", {
-                  "!text-gray-400 pointer-events-none": isLocked,
-                })}
-              >
-                {formatAmountWithSymbol({
-                  amount: item.unit_price * item.quantity,
-                  currency: currencyCode,
-                  tax: item.includes_tax ? 0 : item.tax_lines,
-                  digits: 2,
-                })}
-                <span className="text-gray-400 ml-2">
-                  {currencyCode.toUpperCase()}
-                </span>
-              </div>
+              {formatAmountWithSymbol({
+                amount: item.unit_price * item.quantity,
+                currency: currencyCode,
+                tax: item.tax_lines,
+                digits: 2,
+              })}
             </div>
-            <Actionables forceDropdown actions={actions} />
           </div>
+          <div className="inter-small-regular text-gray-400">
+            {currencyCode.toUpperCase()}
+          </div>
+          <Actionables forceDropdown actions={actions} />
         </div>
       </div>
     </Tooltip>

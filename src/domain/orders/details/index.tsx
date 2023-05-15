@@ -124,7 +124,7 @@ const OrderDetails = () => {
   const dialog = useImperativeDialog()
 
   const [addressModal, setAddressModal] = useState<null | {
-    address?: Address | null
+    address: Address
     type: AddressType
   }>(null)
 
@@ -202,8 +202,6 @@ const OrderDetails = () => {
     const shouldDelete = await dialog({
       heading: "Cancel order",
       text: "Are you sure you want to cancel the order?",
-      extraConfirmation: true,
-      entityName: `order #${order?.display_id}`,
     })
 
     if (!shouldDelete) {
@@ -232,26 +230,32 @@ const OrderDetails = () => {
     },
   ]
 
-  customerActionables.push({
-    label: "Edit Shipping Address",
-    icon: <TruckIcon size={"20"} />,
-    onClick: () =>
-      setAddressModal({
-        address: order?.shipping_address,
-        type: AddressType.SHIPPING,
-      }),
-  })
+  if (order?.shipping_address) {
+    customerActionables.push({
+      label: "Edit Shipping Address",
+      icon: <TruckIcon size={"20"} />,
+      onClick: () =>
+        setAddressModal({
+          address: order?.shipping_address,
+          type: AddressType.SHIPPING,
+        }),
+    })
+  }
 
-  customerActionables.push({
-    label: "Edit Billing Address",
-    icon: <DollarSignIcon size={"20"} />,
-    onClick: () => {
-      setAddressModal({
-        address: order?.billing_address,
-        type: AddressType.BILLING,
-      })
-    },
-  })
+  if (order?.billing_address) {
+    customerActionables.push({
+      label: "Edit Billing Address",
+      icon: <DollarSignIcon size={"20"} />,
+      onClick: () => {
+        if (order.billing_address) {
+          setAddressModal({
+            address: order?.billing_address,
+            type: AddressType.BILLING,
+          })
+        }
+      },
+    })
+  }
 
   if (order?.email) {
     customerActionables.push({
@@ -265,40 +269,28 @@ const OrderDetails = () => {
     })
   }
 
-  if (!order && isLoading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Spinner size="small" variant="secondary" />
-      </div>
-    )
-  }
-
-  if (!order && !isLoading) {
-    navigate("/404")
-  }
-
   return (
     <div>
-      <OrderEditProvider orderId={id!}>
+      <OrderEditProvider orderId={id}>
         <Breadcrumb
           currentPage={"Order Details"}
           previousBreadcrumb={"Orders"}
           previousRoute="/a/orders"
         />
         {isLoading || !order ? (
-          <BodyCard className="flex w-full items-center justify-center pt-2xlarge">
+          <BodyCard className="w-full pt-2xlarge flex items-center justify-center">
             <Spinner size={"large"} variant={"secondary"} />
           </BodyCard>
         ) : (
           <>
             <div className="flex space-x-4">
-              <div className="flex h-full w-7/12 flex-col">
+              <div className="flex flex-col w-7/12 h-full">
                 <BodyCard
-                  className={"mb-4 min-h-[200px] w-full"}
+                  className={"w-full mb-4 min-h-[200px]"}
                   customHeader={
                     <Tooltip side="top" content={"Copy ID"}>
                       <button
-                        className="inter-xlarge-semibold flex cursor-pointer items-center gap-x-2 text-grey-90 active:text-violet-90"
+                        className="inter-xlarge-semibold text-grey-90 active:text-violet-90 cursor-pointer gap-x-2 flex items-center"
                         onClick={handleCopy}
                       >
                         #{order.display_id} <ClipboardCopyIcon size={16} />
@@ -319,13 +311,13 @@ const OrderDetails = () => {
                     },
                   ]}
                 >
-                  <div className="mt-6 flex space-x-6 divide-x">
+                  <div className="flex mt-6 space-x-6 divide-x">
                     <div className="flex flex-col">
-                      <div className="inter-smaller-regular mb-1 text-grey-50">
+                      <div className="inter-smaller-regular text-grey-50 mb-1">
                         Email
                       </div>
                       <button
-                        className="flex cursor-pointer items-center gap-x-1 text-grey-90 active:text-violet-90"
+                        className="text-grey-90 active:text-violet-90 cursor-pointer gap-x-1 flex items-center"
                         onClick={handleCopyEmail}
                       >
                         {order.email}
@@ -333,13 +325,13 @@ const OrderDetails = () => {
                       </button>
                     </div>
                     <div className="flex flex-col pl-6">
-                      <div className="inter-smaller-regular mb-1 text-grey-50">
+                      <div className="inter-smaller-regular text-grey-50 mb-1">
                         Phone
                       </div>
                       <div>{order.shipping_address?.phone || "N/A"}</div>
                     </div>
                     <div className="flex flex-col pl-6">
-                      <div className="inter-smaller-regular mb-1 text-grey-50">
+                      <div className="inter-smaller-regular text-grey-50 mb-1">
                         Payment
                       </div>
                       <div>
@@ -353,7 +345,7 @@ const OrderDetails = () => {
                 <OrderEditContext.Consumer>
                   {({ showModal }) => (
                     <BodyCard
-                      className={"mb-4 h-auto min-h-0 w-full"}
+                      className={"w-full mb-4 min-h-0 h-auto"}
                       title="Summary"
                       actionables={
                         isFeatureEnabled("order_editing")
@@ -385,7 +377,7 @@ const OrderDetails = () => {
                             currency={order.currency_code}
                             totalAmount={-1 * order.discount_total}
                             totalTitle={
-                              <div className="inter-small-regular flex items-center text-grey-90">
+                              <div className="flex inter-small-regular text-grey-90 items-center">
                                 Discount:{" "}
                                 <Badge className="ml-3" variant="default">
                                   {discount.code}
@@ -400,7 +392,7 @@ const OrderDetails = () => {
                             currency={order.currency_code}
                             totalAmount={-1 * order.gift_card_total}
                             totalTitle={
-                              <div className="inter-small-regular flex items-center text-grey-90">
+                              <div className="flex inter-small-regular text-grey-90 items-center">
                                 Gift card:
                                 <Badge className="ml-3" variant="default">
                                   {giftCard.code}
@@ -447,7 +439,7 @@ const OrderDetails = () => {
                 </OrderEditContext.Consumer>
 
                 <BodyCard
-                  className={"mb-4 h-auto min-h-0 w-full"}
+                  className={"w-full mb-4 min-h-0 h-auto"}
                   title="Payment"
                   status={
                     <PaymentStatusComponent status={order.payment_status} />
@@ -472,9 +464,9 @@ const OrderDetails = () => {
                           )}`}
                         />
                         {!!payment.amount_refunded && (
-                          <div className="mt-4 flex justify-between">
+                          <div className="flex justify-between mt-4">
                             <div className="flex">
-                              <div className="mr-2 text-grey-40">
+                              <div className="text-grey-40 mr-2">
                                 <CornerDownRightIcon />
                               </div>
                               <div className="inter-small-regular text-grey-90">
@@ -482,7 +474,7 @@ const OrderDetails = () => {
                               </div>
                             </div>
                             <div className="flex">
-                              <div className="inter-small-regular mr-3 text-grey-90">
+                              <div className="inter-small-regular text-grey-90 mr-3">
                                 -
                                 {formatAmountWithSymbol({
                                   amount: payment.amount_refunded,
@@ -497,12 +489,12 @@ const OrderDetails = () => {
                         )}
                       </div>
                     ))}
-                    <div className="mt-4 flex justify-between">
+                    <div className="flex justify-between mt-4">
                       <div className="inter-small-semibold text-grey-90">
                         Total Paid
                       </div>
                       <div className="flex">
-                        <div className="inter-small-semibold mr-3 text-grey-90">
+                        <div className="inter-small-semibold text-grey-90 mr-3">
                           {formatAmountWithSymbol({
                             amount: order.paid_total - order.refunded_total,
                             currency: order.currency_code,
@@ -516,7 +508,7 @@ const OrderDetails = () => {
                   </div>
                 </BodyCard>
                 <BodyCard
-                  className={"mb-4 h-auto min-h-0 w-full"}
+                  className={"w-full mb-4 min-h-0 h-auto"}
                   title="Fulfillment"
                   status={
                     <FulfillmentStatusComponent
@@ -543,15 +535,15 @@ const OrderDetails = () => {
                         <span className="inter-small-regular text-grey-50">
                           Shipping Method
                         </span>
-                        <span className="inter-small-regular mt-2 text-grey-90">
+                        <span className="inter-small-regular text-grey-90 mt-2">
                           {method?.shipping_option?.name || ""}
                         </span>
-                        <div className="mt-4 flex w-full flex-grow items-center">
+                        <div className="flex flex-grow items-center mt-4 w-full">
                           <JSONView data={method?.data} />
                         </div>
                       </div>
                     ))}
-                    <div className="inter-small-regular mt-6 ">
+                    <div className="mt-6 inter-small-regular ">
                       {allFulfillments.map((fulfillmentObj, i) => (
                         <FormattedFulfillment
                           key={i}
@@ -564,13 +556,13 @@ const OrderDetails = () => {
                   </div>
                 </BodyCard>
                 <BodyCard
-                  className={"mb-4 h-auto min-h-0 w-full"}
+                  className={"w-full mb-4 min-h-0 h-auto"}
                   title="Customer"
                   actionables={customerActionables}
                 >
                   <div className="mt-6">
-                    <div className="flex w-full items-center space-x-4">
-                      <div className="flex h-[40px] w-[40px] ">
+                    <div className="flex w-full space-x-4 items-center">
+                      <div className="flex w-[40px] h-[40px] ">
                         <Avatar
                           user={order.customer}
                           font="inter-large-semibold"
@@ -593,12 +585,12 @@ const OrderDetails = () => {
                         )}
                       </div>
                     </div>
-                    <div className="mt-6 flex space-x-6 divide-x">
+                    <div className="flex mt-6 space-x-6 divide-x">
                       <div className="flex flex-col">
-                        <div className="inter-small-regular mb-1 text-grey-50">
+                        <div className="inter-small-regular text-grey-50 mb-1">
                           Contact
                         </div>
-                        <div className="inter-small-regular flex flex-col">
+                        <div className="flex flex-col inter-small-regular">
                           <span>{order.email}</span>
                           <span>{order.shipping_address?.phone || ""}</span>
                         </div>
@@ -615,7 +607,7 @@ const OrderDetails = () => {
                   </div>
                 </BodyCard>
                 <div className="mt-large">
-                  <RawJSON data={order} title="Raw order" />
+                  <RawJSON data={order} title="Raw order" rootName="order" />
                 </div>
               </div>
               <Timeline orderId={order.id} />
@@ -624,7 +616,7 @@ const OrderDetails = () => {
               <AddressModal
                 handleClose={() => setAddressModal(null)}
                 submit={updateOrder}
-                address={addressModal.address || undefined}
+                address={addressModal.address}
                 type={addressModal.type}
                 allowedCountries={region?.countries}
               />

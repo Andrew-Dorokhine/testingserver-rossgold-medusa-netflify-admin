@@ -22,12 +22,11 @@ const PaymentRequired: React.FC<RequestedProps> = ({ event }) => {
     return null
   }
 
-  const amount = requestedEditDifferenceDue
-    ? order.total +
-      order.refunded_total -
-      order.paid_total +
-      requestedEditDifferenceDue
-    : order.refunded_total - order.paid_total
+  const amount =
+    order.total +
+    order.refunded_total -
+    order.paid_total +
+    requestedEditDifferenceDue
 
   if (amount <= 0) {
     return null

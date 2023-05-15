@@ -1,5 +1,6 @@
-import { useAdminGetSession, useAdminStore } from "medusa-react"
+import { useAdminStore } from "medusa-react"
 import React, { useContext, useEffect, useState } from "react"
+import { AccountContext } from "./account"
 
 export const defaultFeatureFlagContext: {
   featureToggleList: Record<string, boolean>
@@ -14,7 +15,7 @@ export const defaultFeatureFlagContext: {
 export const FeatureFlagContext = React.createContext(defaultFeatureFlagContext)
 
 export const FeatureFlagProvider = ({ children }) => {
-  const { user, isLoading } = useAdminGetSession()
+  const { isLoggedIn } = useContext(AccountContext)
 
   const [featureFlags, setFeatureFlags] = useState<
     { key: string; value: boolean }[]
@@ -26,20 +27,14 @@ export const FeatureFlagProvider = ({ children }) => {
     if (
       isFetching ||
       !store ||
-      (!user && !isLoading) ||
+      !isLoggedIn ||
       !store["feature_flags"]?.length
     ) {
       return
     }
 
-    setFeatureFlags([
-      ...store["feature_flags"],
-      ...store["modules"].map((module) => ({
-        key: module.module,
-        value: true,
-      })),
-    ])
-  }, [isFetching, store, user, isLoading])
+    setFeatureFlags(store["feature_flags"])
+  }, [isFetching, store, isLoggedIn])
 
   const featureToggleList = featureFlags.reduce(
     (acc, flag) => ({ ...acc, [flag.key]: flag.value }),
