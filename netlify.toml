@@ -1,5 +1,5 @@
 [template.environment]
-  MEDUSA_BACKEND_URL="https://medusa-api.appsquire.com"
+  MEDUSA_BACKEND_URL="https://medusa-api-testserver.appsquire.com"
 
 [build]
   publish = "public/"
